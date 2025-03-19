@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>편집 - 대건위키</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="dgwk (1).ico" type="image/x-icon">
+</head>
+<body>
+    <script src="barr.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            converte();
+        })
+    </script>
+    <div class="barr" id="barr">
+    </div>
+    <div class="aaaaaa"></div>
+    <span class="cent"><textarea width="300px" name="" id="ed"></textarea></span>
+    <div class="apl"><input type="button" value="적용" onclick="convv();">&nbsp;<input type="button" value="미리보기" onclick="if(document.getElementById('preview').style.display == 'none'){ document.getElementById('preview').style.display = 'block';}else{document.getElementById('preview').style.display = 'none';}"></div>
+    <div class="des">고의적인 허위사실 유포, 글 테러, 사이버불링 등은 활동정지 및 처벌 받을 수 있습니다.</div>
+    <div class="des">자세한 정보는 <a href="guideline.html">가이드라인</a>을 참조하세요</div>
+    <table id="preview" style="display: none;"><tr><td style="width: 500px; height: 400px; overflow-y: scroll; white-space: nowrap;">
+        <span id="inpp"></td></tr></span></table>
+    <br>
+    <br>
+    <div class="des">2025 대건위키 powered by DART</div>
+</body>
+</html>
