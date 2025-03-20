@@ -5,6 +5,7 @@ let neckkick = "";
 let h1n = 1;
 let h2n = 1;
 let h3n = 1;
+//개발자 테스트용 함수(안중요함)
 function supersecret(){
     if (document.getElementById('ed').value.includes('<br>')){
         document.getElementById('ed').value = document.getElementById('ed').value.replaceAll("<br>", "\n");
@@ -12,6 +13,7 @@ function supersecret(){
         document.getElementById('ed').value = document.getElementById('ed').value.replaceAll(/\n/g, "<br>");
     }
 }
+//위키 편집용 기호를 html 요소로 변환 (+내용에서 일부 발췌해 목차로 변환)
 function conver(){
     indx = indx.replaceAll("->", "→");
     indx = indx.replaceAll("<-", "←");
@@ -41,9 +43,9 @@ function conver(){
     indx = indx.replaceAll("&&", "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp");
     indx = indx.replaceAll(/\n/g, "<br>");
     console.log(indx);
-    document.getElementById('inp').innerHTML = indx;
-    neckslice = document.getElementsByClassName('hed');
-    for (i=0; i <= neckslice.length; i++){
+    document.getElementById('inp').innerHTML = indx;//에디터 내용을 내용 저장용 변수에 저장시킴
+    neckslice = document.getElementsByClassName('hed');//각 문단의 제목만 발췌해 넥슬라이스 변수에 배열변수로 저장
+    for (i=0; i <= neckslice.length; i++){//문단(제목) 개수 만큼 반복
         mokcha = mokcha + neckslice[i].localName + neckslice[i].innerHTML + "</div>";
         mokcha = mokcha.replaceAll("&nbsp;", "");
         if (mokcha.includes("h1")){
@@ -60,10 +62,12 @@ function conver(){
             mokcha = mokcha.replaceAll("h3", "<div>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + h3n + ". ");
             h3n++;
         }
-        document.getElementById('inf').innerHTML = mokcha;
+        document.getElementById('inf').innerHTML = mokcha;//목차 형식에 맞게 변환한 내용을 html의 목차 박스 안 내용으로 지정
     }
-    alert(mokcha);
-}function converte(){
+}
+
+//위키 편집용 기호를 html 요소로 변환 (목차 없음, 내용 편집기 미리보기용이라 글자크기 작게 표시됨)
+function converte(){
     indx = indx.replaceAll("->", "→");
     indx = indx.replaceAll("<-", "←");
     indx = indx.replaceAll("+>", "↓");
@@ -94,16 +98,19 @@ function conver(){
     console.log(indx);
     document.getElementById('inpp').innerHTML = indx;
 }
+//에디터 내용을 본문에 적용
 function conv(){
     indx = document.getElementById('ed').value;
     //document.getElementById(inf).innerHTML = indx.match(/{(.*?)}/);
     conver();
 }
+//에디터 미리보기에 내용 적용
 function convv(){
     indx = document.getElementById('ed').value;
     //document.getElementById(inf).innerHTML = indx.match(/{(.*?)}/);
     converte();
 }
+//html 요소가 모두 불러와지고 자동 실행되어 본문에 내용 적용시킴
 document.addEventListener("DOMContentLoaded", function(){
     conver();
 })
