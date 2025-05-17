@@ -1,0 +1,119 @@
+.barr{
+    background: linear-gradient(157deg, rgba(2,0,36,1) 0%, #27274c 46%, rgba(47,112,139,1) 100%);
+    margin: 0px;
+    color: white;
+    padding: 10px;
+    align-items: center;
+    float: none;
+}
+body{
+    margin: 0px;
+}
+.ln{
+    color: rgba(47,112,139,1);
+    text-decoration: none;
+}
+a{
+    color: rgba(47,112,139,1);
+}
+.searc{
+    border-radius: 0px;
+    border-width: 0;
+    font-size: large;
+    float: none;
+    padding: 5px;
+}
+.search{
+    margin-left: 40%;
+    float: none;
+    border-radius: 50px;
+}
+.searbtn{
+    border-color: white;
+    border-width: 0;
+    background-color: transparent;
+    color: white;
+    padding: 10px;
+    float: none;
+}
+.lgn{
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    float: right;
+}
+.hed{
+    margin-top: 30px;
+    border-bottom: solid;
+    border-width: 1px;
+    border-color: rgb(174, 174, 174);
+}
+#inp{
+    margin: 30px;
+    font-size: 14px;
+}
+.aaaaaa{
+    background: linear-gradient(180deg, #cecece 0%, rgba(255,255,255,1) 80%);
+    padding-bottom: 20px;
+}
+.des{
+    font-size: smaller;
+    text-align: center;
+    color: rgb(80, 80, 80); 
+}
+#inf{
+    border: solid;
+    border-width: 1px;
+    padding: 10px;
+    margin: 30px;
+    margin-right: 40%;
+    font-size: small;
+    border-color: rgb(174, 174, 174);
+    padding-bottom: 100px;
+}
+textarea{
+    width: 500px;
+    height: 350px;
+}
+.apl{
+    text-align: center;
+}
+#inpp{
+    font-size: smaller;
+}
+.ak47{
+    font-size:small;
+    margin: 10px;
+}
+.cent{
+    margin-left: 28%;
+}
+.fixed{
+    position: fixed;
+    right: 0;
+    margin-right: 80px;
+}
+.fx{
+    font-weight: bold;
+}
+.fi{
+    font-size: 15px;
+}
+#msgg{
+    border: solid;
+    border-radius: 500px;
+    padding: 10px;
+    color: white;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+    background: linear-gradient(157deg, rgba(2,0,36,1) 0%, #27274c 46%, rgba(47,112,139,1) 100%);
+    display: none;
+}
+#msggg{
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 70px;
+}

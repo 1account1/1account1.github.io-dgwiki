@@ -1,5 +1,0 @@
-const par = '<span><a href="Index.html" style="margin: 10px;font-size: x-large; color: white; text-decoration: none; font-weight: 700; font-family: "Times New Roman", Times, Bold;"><img src="dgwklogo.png" width="50px" alt=""></a><span><a href="" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">홈</a></span><span><a href="" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">메뉴</a></span><span><a href="help.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">가이드</a></span><a href="" class="lgn">로그인</a><span class="search"><input type="text" placeholder="검색" id="schb" class="searc"><input type="button" value="검색" class="searbtn" onclick="shc(document.getElementById("schb").value);"></span>'
-
-document.addEventListener("DOMContentLoaded", function(){
-    document.getElementById('barr').innerHTML = par;
-})

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>급식 - 대건위키</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="dgwk (1).ico" type="image/x-icon">
+</head>
+<body>  
+    <script src="barr.js"></script>
+    <script src="app.js"></script>
+    <style>
+        .tabel{
+            text-align: center;
+            margin-left: 40%;
+        }
+        td{
+            padding: 20px;
+            border: solid;
+            margin: 0px;
+            border-width: 1px;
+            border-radius: 5px;
+            border-color: rgb(255, 255, 255);
+            background-color: rgb(251, 251, 251);
+            font-size: 15px;
+        }
+        .hhead{
+            border-top-width: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 20px;
+        }
+        .tb{
+            border: solid;
+            border-radius: 50px;
+            padding: 15px;
+            padding-bottom: 5px;
+            padding-top: 3px;
+            margin-bottom: 2px;
+            border-color: transparent;
+            background-color: rgb(251, 251, 251);
+        }
+        .sel{
+            border: solid;
+            border-radius: 50px;
+            padding: 15px;
+            padding-bottom: 5px;
+            padding-top: 3px;
+            margin-bottom: 2px;
+            border-color: transparent;
+            position: fixed;
+            background-color: #2f708b;
+            color: #2f708b;
+            left: 22px;
+            top: 100px;
+        }
+        .like{
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .iii{
+            background-color: transparent;
+        }
+        table{
+            border-collapse: collapse;
+            border-width: 0;
+        }
+        .h2{
+            font-weight: bold;
+            font-size: 25px;
+        }
+        .commento{
+            height: 80px;
+            width: 150px;
+            overflow: auto;
+            text-align: left;
+        }
+        .commente{
+            height: 25px;
+            width: 150px;
+            vertical-align: middle;
+            display: inline-flex;
+        }
+        .inpcom{
+            border-style: solid;
+            border-radius: 500px;
+            border-width: 2px;
+            border-color: #262626;
+            padding: 10px;
+            font-size: 15px;
+        }
+        .ctd{
+            padding: 1px;
+        }
+    </style>
+    <div class="barr" id="barr">
+    </div>
+    <br>
+    <div>
+        <h2>급식피드🥄</h2>
+        <span class="tb" id="d0" onclick="chad(0);">일</span>
+        <span class="tb" id="d1" onclick="chad(1);">월</span>
+        <span class="tb" id="d2" onclick="chad(2);">화</span>
+        <span class="tb" id="d3" onclick="chad(3);">수</span>
+        <span class="tb" id="d4" onclick="chad(4);">목</span>
+        <span class="tb" id="d5" onclick="chad(5);">금</span>
+        <span class="tb" id="d6" onclick="chad(6);">토</span>
+    </div>
+    <span id="babkey" style="display: none;">key</span>
+    <span class="tabel">
+        <table class="iii">
+            <tr>
+                <td class="iii">
+                    <table>
+                        <tr>
+                            <td class="hhead">
+                                조식
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                산채비빔밥/약고추창<br>
+                                팽이유부된장국<br>
+                                반마리통닭&치킨무<br>
+                                열무김치<br>
+                                요구르트
+                            </td>
+                            <td>
+                                <span id="like0" class="like">0</span><br><img id="lk0" onclick="likeit(0);" src="like.png" width="25px">
+                                <br><br><img src="comment.png" width="25px" onclick="opcom(0);" alt="">
+                            </td>
+                            <tr id="commo0" style="display: none;">
+                                <td>
+                                    <div class="commento" id="comm0">
+                                        <table id="tab0">
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="co0" style="display: none;">
+                                <td>
+                                    <div class="commente">
+                                        <input class="inpcom" id="cin0" size="6px" type="text"> <span onclick="uplc(0);" style="color: rgb(90, 168, 251);"> 게시</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tr>
+                    </table>
+                    <td class="iii">
+                        <table>
+                            <tr>
+                                <td class="hhead">
+                                    중식
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    산채비빔밥/약고추창<br>
+                                    팽이유부된장국<br>
+                                    반마리통닭&치킨무<br>
+                                    열무김치<br>
+                                    요구르트
+                                </td>
+                                <td>
+                                    <span id="like1" class="like">0</span><br><img id="lk1" onclick="likeit(1);" src="like.png" width="25px">
+                                    <br><br><img src="comment.png" onclick="opcom(1);" width="25px" alt="">
+                                </td>
+                                <tr id="commo1" style="display: none;">
+                                    <td>
+                                        <div class="commento" id="comm1">
+                                            <table id="tab1">
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="co1" style="display: none;">
+                                    <td>
+                                        <div class="commente">
+                                            <input class="inpcom" id="cin1" size="6px" type="text"> <span onclick="uplc(1);" style="color: rgb(90, 168, 251);"> 게시</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="iii">
+                        <table>
+                            <tr>
+                                <td class="hhead">
+                                    석식
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    산채비빔밥/약고추창<br>
+                                    팽이유부된장국<br>
+                                    반마리통닭&치킨무<br>
+                                    열무김치<br>
+                                    요구르트
+                                </td>
+                                <td>
+                                    <span id="like2" class="like">0</span><br><img id="lk2" onclick="likeit(2);" src="like.png" width="25px">
+                                    <br><br><img src="comment.png" onclick="opcom(2);" width="25px" alt="">
+                                </td>
+                            </tr>
+                            <tr id="commo2" style="display: none;">
+                                <td>
+                                    <div class="commento" id="comm2">
+                                        <table id="tab2">
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="co2" style="display: none;">
+                                <td>
+                                    <div class="commente">
+                                        <input class="inpcom" id="cin2" size="6px" type="text"> <span onclick="uplc(2);" style="color: rgb(90, 168, 251);"> 게시</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </td>
+            </tr>
+        </table>
+    </span>
+</body>
+</html>
