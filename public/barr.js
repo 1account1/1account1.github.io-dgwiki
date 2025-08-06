@@ -7,7 +7,7 @@ const par = `
 </span>
 <span>
 <a href="" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
-메뉴
+시간표
 </a>
 </span>
 <span>

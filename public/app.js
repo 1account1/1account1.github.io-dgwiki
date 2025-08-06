@@ -1,4 +1,4 @@
-let indx = '{기숙사}<br>{{이선관}}<br>&&&&以善館, *Bonitas**(善) 대건고의 교훈인 이선승지(以善勝之)에서 따왔다(이전 이름은 양업관).<br><br>&&&&주로 1학년을 위한 기숙사이나 2학년 소수 인원<br>&&&&또한 거주중이다(3-4층은 1학년, 1층은 2학년, 2층은 1학년과 2학년이 같이 거주한다)<br>&&&&화장실과 샤워실이 층마다 구비되어있다. 에어컨이 유일한 냉난방 시스템이다.<br>&&&&바로 뒤쪽이 봉화산이기 때문에 여름엔 종종 무당벌레가 나오곤 한다.<br>&&&&세 기숙사 중 가장 많은 호실을 자랑한다.<br><br>&&&&이선관 입구 모습+><br>&&&&ㅇㅁㅈ(https://i.namu.wiki/i/joyX9y51UE1cmIKJQv0nvjocqAxkJG_2FlfaQDUEJPdS-oXl_35Rpcbc4mypWvsaaWwXIyHBbehbmNfBUwqsBXxG3gP90erZ0IUAj4S6P4y94gobYJChkALzRCqJu1JO_HKvaWzd-oX0QBL4bqVakQ.webp)ㅇㅁㅈ<br>{{사랑관}}<br>&&&&*Caritas**(사랑, 자선)&&(이전 이름은 우정관)<br><br>&&&&2학년 기숙사 건물이다. 기존엔 ㄹㅋ(https://namu.wiki/w/%EB%B6%80%EC%98%81%EA%B7%B8%EB%A3%B9)ㄴㅇ(부영그룹)ㄴㅇ에서 기증한 동아리실 건물이였지만, 사설 기숙사가 폐쇠됨과<br>&&&&동시에 기숙사 건물로 리모델링 되었다. 화장실과 샤워실은 이선관과 동일하게 층마다 존재하고.<br>&&&&에어컨이 유일한 냉난방 시스템이다. 때문에 겨울에 바닥이 굉장히 차갑다.<br><br>&&&&사랑관 측면+><br>&&&&ㅇㅁㅈ(https://i.namu.wiki/i/29BGADxSdbaSYpbIwQ91DQeVW0FjAuGd55b_RfSjiXo9y4df9FTRlOHxT0GtvuA-fgIdDYhaHpkVx2MoAp7WmPEws6P4ck9uOSdUKe_YMUUygikcNXy4XOL5NjJqugBcyvLSztvlOaccY1P1H9o8pg.webp)ㅇㅁㅈ<br>{{진리관}}<br>&&&&*Veritas**(진리)<br><br>&&&&가장 신축 기숙사며 3학년 전용이다. <br>&&&&화장실이 방마다 있는 유일한 기숙사이다. 또한 보일러가 있는 유일한 기숙사이다.<br>&&&&3학년이 되면 누구나 거주할 수 있다.(단 예신은 불가능 -> 사랑관에 살게된다.)<br><br>&&&&진리관 정면+><br>&&&&ㅇㅁㅈ(https://i.namu.wiki/i/_M_Sfjkxr25rostX6onnoNxlAK-yv9zAuSJvYK7erHwSaeqZhokeX8muFkAR7_gYeVtrboaeSxdmBJfVVP884BkVyhig8uYogrocVi_zefDamzl-7bSPcJaTWzsjz8M-tBWB09pencvUwxlZcxkXXA.webp)ㅇㅁㅈ';
+let indx = '{아직 존재하지 않는 문서입니다}}';
 let neckslice = ""; //내용에서 제목부분만
 let mokcha = "";
 let neckkick = "";
@@ -68,21 +68,20 @@ function alerte(innout){
     document.getElementById('msgg').innerHTML = innout;
     slidedown();
 }
-async function upl(event){
-    event.preventDefault();
-    let namew = wikiname;
-    let indxxx = document.getElementById('ed').value;
-    let todd = new Date();
-    let editlog = "편집자 : " + username + " 수정본 업로드일 및 시간 : " + todd;
-    const res = await fetch('/wiki', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ namew, indxxx, editlog})
-    });
-
-    const data = await res.json();
-    console.log('서버 응답:', data);
+function upl(){
+    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify([
+            [ wikiname, document.getElementById('ed').value, new Date().toLocaleString() ]  // ← 여기를 2차원 배열로
+        ])
+    })
+    .then(() => console.log("제출 성공!"))
+    .catch((err) => console.log("에러 발생: " + err));
 }
+/*
 async function upel(event){
     event.preventDefault();
     let title = wikiname;
@@ -110,7 +109,7 @@ async function uplc(onetwothree){
     const data = await res.json();
     console.log('서버 응답:', data);
     document.getElementById('tab' + onetwothree).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + cmt + '</td></tr><br>' + document.getElementById('tab' + onetwothree).innerHTML;
-}
+}*/
 
 function selup(){
     selll = 0;
@@ -368,16 +367,18 @@ async function startt() {
             document.getElementById('inp').innerHTML = "아직 존재하지 않는 문서입니다. "+ "<br>" +"문서 편집을 클릭해 이 문서를 만들어주세요."
         }
     }
-    const res = await fetch('/wiki/' + wikiname);
-    const data = await res.json();
-    if (!res.ok) {
-        // 오류가 발생한 경우 처리
-        console.error('데이터를 불러오는 데 문제가 발생했습니다.');
-        return;
-    }
-    console.log('서버에서 받은 데이터:', data);
-    indx = data.indxxx;
-    conver();
+    fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/Sheet1')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            if (element.제목 == wikiname){
+                indx = element.문서;
+            }
+        })
+        setTimeout(function() {
+            conver();
+        }, 10);
+    })
 }
 async function likie() {
     const res = await fetch('/babl/' + ddd);
@@ -401,17 +402,19 @@ async function likie() {
     }
     console.log(cookies);
 }
-async function editie() {
-    document.getElementById('doctie').innerHTML = wikiname + ': 편집';
-    const res = await fetch('/wiki/' + wikiname);
-    const data = await res.json();
-    if (!res.ok) {
-        // 오류가 발생한 경우 처리
-        console.error('데이터를 불러오는 데 문제가 발생했습니다.');
-        return;
-    }
-    console.log('서버에서 받은 데이터:', data);
-    document.getElementById('ed').value = data.indxxx
+function editie() {
+    fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/Sheet1')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            if (element.제목 == wikiname){
+                indx = element.문서;
+            }
+        })
+        setTimeout(function() {
+            document.getElementById('ed').value = indx
+        }, 10);
+    })
 }
 
 
