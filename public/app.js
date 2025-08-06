@@ -26,6 +26,7 @@ let inddx;
 let sp = 0;
 let likedp = [false, false, false];
 let ddd = new Date().getDay();
+let meal = []
 settt = 100 + ddd * 35;
 //const db = require('./db'); //db 객체 불러기기
 //const wiki = db.prepare('SELECT * FROM wiki').all();
@@ -95,21 +96,25 @@ async function upel(event){
 
     const data = await res.json();
     console.log('서버 응답:', data);
-}
-async function uplc(onetwothree){
+}*/
+function uplc(onetwothree){
     let dtl = ddd + ":" + onetwothree;
     let cmt = document.getElementById('cin' + onetwothree).value;
-    let user = "DART"
-    const res = await fetch('/babc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dtl, cmt, user})
-    });
+    let user = username
+    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=comment", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify([
+            [ dtl, cmt, user ]  // ← 여기를 2차원 배열로
+        ])
+    })
+    .then(() => console.log("제출 성공!"))
+    .catch((err) => console.log("에러 발생: " + err));
 
-    const data = await res.json();
-    console.log('서버 응답:', data);
     document.getElementById('tab' + onetwothree).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + cmt + '</td></tr><br>' + document.getElementById('tab' + onetwothree).innerHTML;
-}*/
+}
 
 function selup(){
     selll = 0;
@@ -124,16 +129,19 @@ function selup(){
     }
 }
 
-async function opcom(numb){
+function opcom(numb){
     if (document.getElementById("commo" + numb).style.display == "none"){
         document.getElementById("commo" + numb).style.display = "block";
         document.getElementById("co" + numb).style.display = "block";
-        const res = await fetch(`/babc/` + ddd + ":" + numb);
-        const data = await res.json();
-        data.forEach(item => {
-            console.log(item.cmt);
-            document.getElementById('tab' + numb).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + item.cmt + '</td></tr><br>' + document.getElementById('tab' + numb).innerHTML;
-        }); 
+        fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/comment')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(element => {
+                if(element.dtl == ddd + ":" + numb){
+                    document.getElementById('tab' + numb).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + element.cmt + '</td></tr><br>' + document.getElementById('tab' + numb).innerHTML;
+                }
+                });
+        })
     }else{
         document.getElementById("commo" + numb).style.display = "none";
         document.getElementById("co" + numb).style.display = "none";
@@ -305,6 +313,20 @@ function chad(dddd){
     document.getElementById('d' + ddd).style.background = "#2f708b";
     document.getElementById('d' + ddd).style.color = "white";
 }
+function chadd(dddd){
+    document.getElementById("m1").innerText = meal[dddd-1];
+    document.getElementById("m2").innerText = meal[dddd+6];
+    document.getElementById("m3").innerText = meal[dddd+13];
+    document.getElementById("commo0").style.display = "none";
+    document.getElementById("co0").style.display = "none";
+    document.getElementById('tab0').innerHTML = ""
+    document.getElementById("commo1").style.display = "none";
+    document.getElementById("co1").style.display = "none";
+    document.getElementById('tab1').innerHTML = ""
+    document.getElementById("commo2").style.display = "none";
+    document.getElementById("co2").style.display = "none";
+    document.getElementById('tab2').innerHTML = ""
+}
 
 //위키 편집용 기호를 html 요소로 변환 (목차 없음, 내용 편집기 미리보기용이라 글자크기 작게 표시됨)
 function converte(){
@@ -380,18 +402,52 @@ async function startt() {
         }, 10);
     })
 }
-async function likie() {
-    const res = await fetch('/babl/' + ddd);
-    const data = await res.json();
-    if (!res.ok) {
-        // 오류가 발생한 경우 처리
-        console.error('데이터를 불러오는 데 문제가 발생했습니다.');
-        return;
-    }
-    console.log('서버에서 받은 데이터:', data);
-    lnn[0] = data.likeb
-    lnn[1] = data.likel
-    lnn[2] = data.liked
+function likie() {
+    fetch('https://opensheet.elk.sh/1aX58DkluHW_ZOjNg2oQFm1jIV_1coz2qnPr-Ie7z5pw/시트1')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            meal.push(element.월);
+            meal.push(element.화);
+            meal.push(element.수);
+            meal.push(element.목);
+            meal.push(element.금);
+            meal.push(element.토);
+            meal.push(element.일);
+        })
+    })
+    setTimeout(function(){
+        document.getElementById("m1").innerText = meal[new Date().getDay()-1];
+        document.getElementById("m2").innerText = meal[new Date().getDay()+6];
+        document.getElementById("m3").innerText = meal[new Date().getDay()+13];
+    }, 300)
+    fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/likes')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            if (new Date().getDay() == 0){
+                lnn.push(data.sun);
+            }
+            if (new Date().getDay() == 1){
+                lnn.push(data.mon);
+            }
+            if (new Date().getDay() == 2){
+                lnn.push(data.tue);
+            }
+            if (new Date().getDay() == 3){
+                lnn.push(data.wed);
+            }
+            if (new Date().getDay() == 4){
+                lnn.push(data.thu);
+            }
+            if (new Date().getDay() == 5){
+                lnn.push(data.fri);
+            }
+            if (new Date().getDay() == 6){
+                lnn.push(data.sat);
+            }
+        })
+    })
     document.getElementById('like0').innerHTML = lnn[0];
     document.getElementById('like1').innerHTML = lnn[1];
     document.getElementById('like2').innerHTML = lnn[2];
