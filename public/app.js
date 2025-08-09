@@ -208,7 +208,7 @@ function likeit(onetwothree){
                 "Content-Type": "application/json"
             },
             body: JSON.stringify([
-                [ dayl + ":" + onetwothree + ":" + mail ]  // ← 여기를 2차원 배열로
+                [ dayl + ":" + onetwothree + ":" + mail ]
             ])
         })
         .then(() => console.log("제출 성공!"))
