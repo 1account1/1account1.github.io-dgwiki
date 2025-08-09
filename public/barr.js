@@ -18,7 +18,7 @@ const par = `
 경제소식지
 </a>
 </span>
-<a href="llogin.html" class="lgn">로그인</a><span class="search">
+<a href="llogin.html" id="lgn" class="lgn">로그인</a><span class="search">
 <input type="text" placeholder="검색" class="searc" id="schb">
 <input type="button" value="검색" class="searbtn" onclick="srch();">
 </span>`

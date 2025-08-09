@@ -22,7 +22,8 @@ let apll;
 let selll;
 let settt;
 let news;
-let username = "DART";
+let username;
+let mail;
 let inddx;
 let sp = 0;
 let likedp = [false, false, false];
@@ -63,6 +64,22 @@ function slidedown(){
         }, 1500)
     }
 }
+function slidedownl(){
+    if (apll < 21){
+        document.getElementById('msggg').style.top = 50 + apll + "px";
+        document.getElementById('msggg').style.opacity = apll * 0.05;
+        setTimeout(function(){
+            apll++;
+            slidedownl();
+        }, 10)
+    }else{
+        setTimeout(function(){
+            apll = 0;
+            slideup();
+            document.getElementById('msggg').style.opacity = 1;
+        }, 3000)
+    }
+}
 function alerte(innout){
     document.getElementById('msgg').style.display = 'block';
     apll = 0;
@@ -70,18 +87,31 @@ function alerte(innout){
     document.getElementById('msgg').innerHTML = innout;
     slidedown();
 }
+
+function alertel(innout){
+    document.getElementById('msgg').style.display = 'block';
+    apll = 0;
+    document.getElementById('msggg').style.opacity = 0;
+    document.getElementById('msgg').innerHTML = innout;
+    slidedown();
+}
 function upl(){
-    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify([
-            [ wikiname, document.getElementById('ed').value, new Date().toLocaleString() ]  // ← 여기를 2차원 배열로
-        ])
-    })
-    .then(() => console.log("제출 성공!"))
-    .catch((err) => console.log("에러 발생: " + err));
+    alertel('업로드 하는중...')
+    if (localStorage.getItem('useremail')){
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                [ wikiname, document.getElementById('ed').value, username + mail + new Date().toLocaleString() ]  // ← 여기를 2차원 배열로
+            ])
+        })
+        .then(() => alerte('업로드 완료✅'))
+        .catch((err) => console.log("에러 발생: " + err));
+    }else{
+        alerte('로그인이 필요합니다');
+    }
 }
 /*
 async function upel(event){
@@ -99,22 +129,26 @@ async function upel(event){
     console.log('서버 응답:', data);
 }*/
 function uplc(onetwothree){
-    let dtl = ddd + ":" + onetwothree;
-    let cmt = document.getElementById('cin' + onetwothree).value;
-    let user = username
-    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=comment", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify([
-            [ dtl, cmt, user ]  // ← 여기를 2차원 배열로
-        ])
-    })
-    .then(() => console.log("제출 성공!"))
-    .catch((err) => console.log("에러 발생: " + err));
+    if (localStorage.getItem('useremail')){
+        let dtl = ddd + ":" + onetwothree;
+        let cmt = document.getElementById('cin' + onetwothree).value;
+        let user = username + mail
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=comment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                [ dtl, cmt, user ]  // ← 여기를 2차원 배열로
+            ])
+        })
+        .then(() => console.log("제출 성공!"))
+        .catch((err) => console.log("에러 발생: " + err));
 
-    document.getElementById('tab' + onetwothree).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + cmt + '</td></tr><br>' + document.getElementById('tab' + onetwothree).innerHTML;
+        document.getElementById('tab' + onetwothree).innerHTML = '<td class="ctd"><strong>익명의대건인</strong></td></tr><tr><td class="ctd">' + cmt + '</td></tr><br>' + document.getElementById('tab' + onetwothree).innerHTML;
+    }else{
+        alerte("로그인이 필요합니다");
+    }
 }
 
 function selup(){
@@ -191,6 +225,14 @@ function supersecret(){
 }
 function srch(){
     window.location.href = "Index.html?wikie=" + document.getElementById('schb').value;
+}
+function loginn(){
+    if (localStorage.getItem('useremail')){
+        username = localStorage.getItem('username');
+        mail = localStorage.getItem('useremail');
+        document.getElementById('lgn').innerHTML = username + "님" + "<br><div style='font-size: 10px;text-align: right;'>로그아웃</div>";
+        document.getElementById('lgn').href = "logout.html";
+    }
 }
 //위키 편집용 기호를 html 요소로 변환 (+내용에서 일부 발췌해 목차로 변환)
 function conver(){
@@ -324,6 +366,22 @@ function chadd(dddd){
     document.getElementById("commo2").style.display = "none";
     document.getElementById("co2").style.display = "none";
     document.getElementById('tab2').innerHTML = ""
+    lnn = [0, 0, 0];
+    document.getElementById('lk0').src = "like.png";
+    document.getElementById('lk1').src = "like.png";
+    document.getElementById('lk2').src = "like.png";
+    fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/likes')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            if (element.like.split(":")[0] == ddd){
+                lnn[element.like.split(":")[1]]++;
+            }
+            document.getElementById('like0').innerHTML = lnn[0];
+            document.getElementById('like1').innerHTML = lnn[1];
+            document.getElementById('like2').innerHTML = lnn[2];
+        })
+    })
 }
 
 //위키 편집용 기호를 html 요소로 변환 (목차 없음, 내용 편집기 미리보기용이라 글자크기 작게 표시됨)
@@ -511,6 +569,7 @@ async function kyungjae(){
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+    loginn()
     if (document.getElementById('inkey')){
         startt();
         console.log("🥕keychecked")
