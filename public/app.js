@@ -21,6 +21,7 @@ let indxx = "";
 let apll;
 let selll;
 let settt;
+let news;
 let username = "DART";
 let inddx;
 let sp = 0;
@@ -152,7 +153,7 @@ function opcom(numb){
 function homesweethome(){
     alerte("집가고싶다🧡");
 }
-async function likeit(onetwothree){
+function likeit(onetwothree){
     document.getElementById('lk' + onetwothree).src = "liked.png";
     if (likedp[onetwothree]){
         console("nomorelike");
@@ -166,22 +167,19 @@ async function likeit(onetwothree){
     let likeb = lnn[0];
     let likel = lnn[1];
     let liked = lnn[2];
-    const res = await fetch('/babl/' + ddd, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ likeb, likel, liked})
-    });
-
-    const data = await res.json();
-    console.log('서버 응답:', data);
-
+    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=likes", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify([
+            [ dayl + ":" + onetwothree ]  // ← 여기를 2차원 배열로
+        ])
+    })
+    .then(() => console.log("제출 성공!"))
+    .catch((err) => console.log("에러 발생: " + err));
 }
-async function likers(){
-    const res = await fetch('/babl/reset', {
-        method: 'PUT',
-    });
-  
-}
+
 //개발자 테스트용 함수(안중요함)
 function supersecret(){
     if (document.getElementById('ed').value.includes('<br>')){
@@ -381,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById('d' + ddd).style.color = "white";
 })
 async function startt() {
-    document.getElementById('vuswlq').href = "editor.html?wikie=" + wikiname;
+    document.getElementById('vuswlq').href = "editor.html?wikie=" + wikiname;8
     if (wikiname == null){
         window.location.href = "Index.html?wikie=논산대건고등학교";
     }else{
@@ -401,6 +399,35 @@ async function startt() {
             conver();
         }, 10);
     })
+
+    fetch('https://opensheet.elk.sh/1aX58DkluHW_ZOjNg2oQFm1jIV_1coz2qnPr-Ie7z5pw/시트1')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            meal.push(element.월);
+            meal.push(element.화);
+            meal.push(element.수);
+            meal.push(element.목);
+            meal.push(element.금);
+            meal.push(element.토);
+            meal.push(element.일);
+            if (new Date().getHours() < 8){
+                document.getElementById("food").innerText = meal[new Date().getDay()-1];
+            }else{
+                if (new Date().getHours() < 13){
+                    document.getElementById("food").innerText = meal[new Date().getDay()+6];
+                }else{
+                    if (new Date().getHours() < 18){
+                        document.getElementById("food").innerText = meal[new Date().getDay()+13];
+                    }else{
+                        document.getElementById("food").innerText = meal[new Date().getDay()];
+                    }
+            }
+            news = element.news;
+            document.getElementById("news").innerHTML = news;
+        }
+    })
+    })
 }
 function likie() {
     fetch('https://opensheet.elk.sh/1aX58DkluHW_ZOjNg2oQFm1jIV_1coz2qnPr-Ie7z5pw/시트1')
@@ -414,43 +441,23 @@ function likie() {
             meal.push(element.금);
             meal.push(element.토);
             meal.push(element.일);
+            document.getElementById("m1").innerText = meal[new Date().getDay()-1];
+            document.getElementById("m2").innerText = meal[new Date().getDay()+6];
+            document.getElementById("m3").innerText = meal[new Date().getDay()+13];
         })
     })
-    setTimeout(function(){
-        document.getElementById("m1").innerText = meal[new Date().getDay()-1];
-        document.getElementById("m2").innerText = meal[new Date().getDay()+6];
-        document.getElementById("m3").innerText = meal[new Date().getDay()+13];
-    }, 300)
     fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/likes')
     .then(res => res.json())
     .then(data => {
         data.forEach(element => {
-            if (new Date().getDay() == 0){
-                lnn.push(data.sun);
+            if (element.like.split(":")[0] == ddd){
+                lnn[element.like.split(":")[1]]++;
             }
-            if (new Date().getDay() == 1){
-                lnn.push(data.mon);
-            }
-            if (new Date().getDay() == 2){
-                lnn.push(data.tue);
-            }
-            if (new Date().getDay() == 3){
-                lnn.push(data.wed);
-            }
-            if (new Date().getDay() == 4){
-                lnn.push(data.thu);
-            }
-            if (new Date().getDay() == 5){
-                lnn.push(data.fri);
-            }
-            if (new Date().getDay() == 6){
-                lnn.push(data.sat);
-            }
+            document.getElementById('like0').innerHTML = lnn[0];
+            document.getElementById('like1').innerHTML = lnn[1];
+            document.getElementById('like2').innerHTML = lnn[2];
         })
     })
-    document.getElementById('like0').innerHTML = lnn[0];
-    document.getElementById('like1').innerHTML = lnn[1];
-    document.getElementById('like2').innerHTML = lnn[2];
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
         const [key, value] = cookie.split('=');
