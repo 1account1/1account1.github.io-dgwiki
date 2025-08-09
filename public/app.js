@@ -188,30 +188,34 @@ function homesweethome(){
     alerte("집가고싶다🧡");
 }
 function likeit(onetwothree){
-    document.getElementById('lk' + onetwothree).src = "liked.png";
-    if (likedp[onetwothree]){
-        console("nomorelike");
+    if (localStorage.getItem('useremail')){
+        document.getElementById('lk' + onetwothree).src = "liked.png";
+        if (likedp[onetwothree]){
+            console("nomorelike");
+        }else{
+            lnn[onetwothree]++;
+            document.getElementById('like' + onetwothree).innerHTML = lnn[onetwothree];
+        }
+        likedp[onetwothree] = true;
+        //백
+        let dayl = ddd;
+        let likeb = lnn[0];
+        let likel = lnn[1];
+        let liked = lnn[2];
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=likes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                [ dayl + ":" + onetwothree + ":" + mail ]  // ← 여기를 2차원 배열로
+            ])
+        })
+        .then(() => console.log("제출 성공!"))
+        .catch((err) => console.log("에러 발생: " + err));
     }else{
-        lnn[onetwothree]++;
-        document.getElementById('like' + onetwothree).innerHTML = lnn[onetwothree];
+        alerte("로그인이 필요합니다");
     }
-    likedp[onetwothree] = true;
-    //백
-    let dayl = ddd;
-    let likeb = lnn[0];
-    let likel = lnn[1];
-    let liked = lnn[2];
-    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=likes", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify([
-            [ dayl + ":" + onetwothree ]  // ← 여기를 2차원 배열로
-        ])
-    })
-    .then(() => console.log("제출 성공!"))
-    .catch((err) => console.log("에러 발생: " + err));
 }
 
 //개발자 테스트용 함수(안중요함)
@@ -380,6 +384,10 @@ function chadd(dddd){
             document.getElementById('like0').innerHTML = lnn[0];
             document.getElementById('like1').innerHTML = lnn[1];
             document.getElementById('like2').innerHTML = lnn[2];
+            if (element.like.split(":")[2] == mail && element.like.split(":")[0] == ddd){
+                document.getElementById('lk' + element.like.split(":")[1]).src = "liked.png";
+                likedp[element.like.split(":")[1]] = true;
+            }
         })
     })
 }
@@ -514,6 +522,10 @@ function likie() {
             document.getElementById('like0').innerHTML = lnn[0];
             document.getElementById('like1').innerHTML = lnn[1];
             document.getElementById('like2').innerHTML = lnn[2];
+            if (element.like.split(":")[2] == mail && element.like.split(":")[0] == ddd){
+                document.getElementById('lk' + element.like.split(":")[1]).src = "liked.png";
+                likedp[element.like.split(":")[1]] = true;
+            }
         })
     })
     const cookies = document.cookie.split('; ');
