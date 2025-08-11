@@ -453,6 +453,7 @@ async function startt() {
             document.getElementById('inp').innerHTML = "아직 존재하지 않는 문서입니다. "+ "<br>" +"문서 편집을 클릭해 이 문서를 만들어주세요."
         }
     }
+    let lar = [];
     fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/Sheet1')
     .then(res => res.json())
     .then(data => {
@@ -460,8 +461,25 @@ async function startt() {
             if (element.제목 == wikiname){
                 indx = element.문서;
             }
+            if (wikiname == "문서 목록"){
+                if (lar.includes(element.제목)){
+                    console.log("a");
+                }else{
+                    if (element.문서.includes("ㄷㅇㄹㅌ") || element.문서.includes("ㅎㅇㄷ")){
+                    console.log("a");
+                    }else{
+                        lar.push(element.제목);
+                    }
+                }
+            }
         })
         setTimeout(function() {
+            if (wikiname == "문서 목록"){
+                indx = `{목록}`
+                for (i=0;i<lar.length;i++){
+                    indx = indx + "<br><a href='?wikie="+ lar[i] + "'>" + lar[i] + "</a>";
+                }
+            }
             conver();
         }, 10);
     })
@@ -547,6 +565,9 @@ function editie() {
         setTimeout(function() {
             if (indx == "<h2 class='hed' class='t1'>아직 존재하지 않는 문서입니다</h2>"){
                 indx = '{아직 존재하지 않는 문서입니다}';
+            }
+            if (wikiname == "문서 목록"){
+                indx = '{편집이 불가능한 문서입니다}';
             }
             document.getElementById('ed').value = indx
         }, 10);

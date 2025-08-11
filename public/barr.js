@@ -14,6 +14,9 @@ const par = `
 <a href="bab.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
 급식
 </a>
+<a href="Index.html?wikie=문서 목록" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
+문서목록
+</a>
 <a href="economy.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
 경제소식지
 </a>
