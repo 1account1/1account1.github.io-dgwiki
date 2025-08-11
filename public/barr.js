@@ -17,9 +17,6 @@ const par = `
 <a href="Index.html?wikie=문서 목록" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
 문서목록
 </a>
-<a href="economy.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
-경제소식지
-</a>
 </span>
 <a href="llogin.html" id="lgn" class="lgn">로그인</a><span class="search">
 <input type="text" placeholder="검색" class="searc" id="schb">
