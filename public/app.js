@@ -1,4 +1,4 @@
-let indx = '{아직 존재하지 않는 문서입니다}}';
+let indx = '{아직 존재하지 않는 문서입니다}';
 let neckslice = ""; //내용에서 제목부분만
 let mokcha = "";
 let neckkick = "";
@@ -545,6 +545,9 @@ function editie() {
             }
         })
         setTimeout(function() {
+            if (indx == "<h2 class='hed' class='t1'>아직 존재하지 않는 문서입니다</h2>"){
+                indx = '{아직 존재하지 않는 문서입니다}';
+            }
             document.getElementById('ed').value = indx
         }, 10);
     })
