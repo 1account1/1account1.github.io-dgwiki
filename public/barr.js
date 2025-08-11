@@ -6,7 +6,7 @@ const par = `
 <span>
 </span>
 <span>
-<a href="http://votedghs.kro.kr/Index.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
+<a href="http://votedghs.kro.kr" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
 회장선거
 </a>
 </span>
