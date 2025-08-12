@@ -228,6 +228,51 @@ function supersecret(){
     alerte("뾰로롱✨")
 }
 function srch(){
+    if (mail == "kminnnnn@pess.cnehs.kr" && document.getElementById('schb').value == "supersecret"){
+        let lar = [];
+        let lardoc = [];
+        let larlog = [];
+        fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/Sheet1')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(element => {
+                if (lar.includes(element.제목)){
+                    console.log("a");
+                }else{
+                    lar.push(element.제목);
+                }
+                if (lar.indexOf(element.제목) != -1){
+                    lardoc[lar.indexOf(element.제목)] = element.문서;
+                    larlog[lar.indexOf(element.제목)] = element.log;
+                }
+            })
+            setTimeout(function() {
+                fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1&range=A2:Z1000", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify([[]]) // 범위 전체를 빈 값으로 채움
+                })
+                .then(res => res.json())
+                .then(data => console.log("데이터 삭제 완료:", data))
+                .catch(err => console.error(err));
+                for (i=0;i>lar.length;i++){
+                    fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify([
+                            [ lar[i], lardoc[i], larlog[i] ]  // ← 여기를 2차원 배열로
+                        ])
+                    })
+                    .then(() => alerte('업로드 완료✅'))
+                    .catch((err) => console.log("에러 발생: " + err));
+                }
+            }, 100)
+        })
+    }
     window.location.href = "Index.html?wikie=" + document.getElementById('schb').value;
 }
 function loginn(){
