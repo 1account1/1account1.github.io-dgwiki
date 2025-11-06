@@ -34,6 +34,7 @@ settt = 100 + ddd * 35;
 //const wiki = db.prepare('SELECT * FROM wiki').all();
 let params = new URLSearchParams(window.location.search);
 let wikiname = params.get("wikie");
+let ind;
 
 function slideup(){
     if (apll < 11){
@@ -98,7 +99,28 @@ function alertel(innout){
 function upl(){
     alertel('업로드 하는중...')
     if (localStorage.getItem('useremail')){
-        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+        Fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+            method: "PUT", // ⬅️ 행을 수정할 때는 반드시 PUT 메서드를 사용합니다.
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // 🚨 중요: 어떤 행을 찾을지 지정하는 검색 조건
+                "searchKey": "A", // ⬅️ Google Sheet의 'A' 열을 기준으로 검색합니다.
+                "searchValue": wikiname, // ⬅️ A열에서 이 값을 가진 행을 찾습니다.
+                
+                "B": ind + document.getElementById('ed').value + "///" + username + mail + new Date().toLocaleString() + "///", 
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(() => alerte('업데이트 완료✅'))
+        .catch((err) => console.log("에러 발생: " + err));
+        /*fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -108,7 +130,7 @@ function upl(){
             ])
         })
         .then(() => alerte('업로드 완료✅'))
-        .catch((err) => console.log("에러 발생: " + err));
+        .catch((err) => console.log("에러 발생: " + err));*/
     }else{
         alerte('로그인이 필요합니다');
     }
@@ -490,7 +512,7 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById('d' + ddd).style.color = "white";
 })
 async function startt() {
-    document.getElementById('vuswlq').href = "editor.html?wikie=" + wikiname;8
+    document.getElementById('vuswlq').href = "editor.html?wikie=" + wikiname;
     if (wikiname == null){
         window.location.href = "Index.html?wikie=논산대건고등학교";
     }else{
@@ -504,7 +526,7 @@ async function startt() {
     .then(data => {
         data.forEach(element => {
             if (element.제목 == wikiname){
-                indx = element.문서;
+                indx = element.문서.split("///")[element.문서.split("///").length - 3];
             }
             if (wikiname == "문서 목록"){
                 if (lar.includes(element.제목)){
@@ -604,7 +626,8 @@ function editie() {
     .then(data => {
         data.forEach(element => {
             if (element.제목 == wikiname){
-                indx = element.문서;
+                ind = element.문서;
+                indx = element.문서.split("///")[element.문서.split("///").length - 3];
             }
         })
         setTimeout(function() {
