@@ -1,0 +1,432 @@
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>지식 공유 Q&A</title>
+        <!-- Tailwind CSS CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Inter Font -->
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+            body { font-family: 'Inter', sans-serif; }
+        </style>
+    </head>
+    <body class="bg-gray-50 min-h-screen">
+
+        <div id="app" class="max-w-4xl mx-auto p-4 md:p-8">
+            <!-- Header -->
+            <header class="mb-8">
+                <h1 class="text-4xl font-extrabold text-blue-700 tracking-tight">
+                    <span class="text-blue-500">지식</span> 공유 커뮤니티
+                </h1>
+                <p class="text-gray-500 mt-1">궁금한 것을 질문하고, 아는 지식을 공유하세요!</p>
+                <div id="user-info" class="mt-2 text-sm text-gray-600">
+                    <!-- User ID will be displayed here -->
+                    <span class="font-semibold">사용자 ID: </span><span id="display-user-id" class="break-all text-blue-500">로딩 중...</span>
+                </div>
+            </header>
+
+            <!-- Question Submission Form -->
+            <section class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-blue-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9.228a4.5 4.5 0 014.593 0m4.593 0a4.5 4.5 0 01-4.593 0m0 0V3m0 6v12m-4-6h8m-8 0H4m8 0h8"></path></svg>
+                    질문하기
+                </h2>
+                <form id="question-form">
+                    <div class="mb-4">
+                        <label for="question-title" class="block text-sm font-medium text-gray-700 mb-1">질문 제목</label>
+                        <input type="text" id="question-title" required placeholder="간결하고 명확하게 질문을 요약해주세요."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                    </div>
+                    <div class="mb-4">
+                        <label for="question-content" class="block text-sm font-medium text-gray-700 mb-1">질문 내용</label>
+                        <textarea id="question-content" required rows="4" placeholder="자세한 내용을 작성하여 정확한 답변을 얻으세요."
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                        질문 등록하기
+                    </button>
+                </form>
+            </section>
+
+            <!-- Question List Section -->
+            <section class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2m-2 0h-4"></path></svg>
+                    전체 질문 (<span id="question-count">0</span>개)
+                </h2>
+                <div id="questions-list" class="space-y-4">
+                    <!-- Questions will be dynamically inserted here -->
+                    <p id="loading-message" class="text-center text-gray-500 p-4">질문을 로딩 중입니다...</p>
+                </div>
+            </section>
+
+            <!-- Modal for Console Messages (instead of alert) -->
+            <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+                <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
+                    <h3 class="text-xl font-bold text-red-600 mb-4">알림</h3>
+                    <p id="modal-text" class="text-gray-700 mb-4"></p>
+                    <button onclick="document.getElementById('message-modal').classList.add('hidden')"
+                            class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold transition duration-300">
+                        닫기
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Firebase SDKs -->
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+            import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            import { getFirestore, doc, addDoc, setDoc, onSnapshot, collection, serverTimestamp, arrayUnion, arrayRemove, updateDoc, query, orderBy, deleteDoc, getDocs, runTransaction, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            
+            // Global variables for Firebase services and user data
+            let db;
+            let auth;
+            let userId = 'anonymous';
+            let appId;
+            let isAuthReady = false;
+
+            // --- Utility Functions ---
+
+            /**
+            * Shows a custom message modal instead of using alert().
+            * @param {string} message The message to display.
+            */
+            const showModal = (message) => {
+                const modal = document.getElementById('message-modal');
+                document.getElementById('modal-text').textContent = message;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            };
+
+            /**
+            * Formats a timestamp into a readable date string.
+            * @param {number} timestamp Unix timestamp (milliseconds).
+            * @returns {string} Formatted date string.
+            */
+            const formatDate = (timestamp) => {
+                if (!timestamp) return '시간 정보 없음';
+                // Firestore serverTimestamp is an object until retrieved, but onSnapshot converts it.
+                // If it's a Firestore Timestamp object, we need to handle it.
+                let date;
+                if (timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (typeof timestamp === 'number') {
+                    date = new Date(timestamp);
+                } else {
+                    return '시간 정보 없음';
+                }
+
+                return date.toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            };
+
+            /**
+            * Renders the UI for a single answer.
+            * @param {Object} answer The answer object.
+            * @param {string} questionId The ID of the parent question.
+            * @returns {string} HTML string for the answer.
+            */
+            const renderAnswerHtml = (answer) => {
+                return `
+                    <div class="answer-item p-3 mt-2 bg-gray-100 rounded-lg border-l-4 border-blue-400">
+                        <p class="text-gray-700 mb-2">${answer.content.replace(/\n/g, '<br>')}</p>
+                        <div class="text-xs text-gray-500 flex justify-between items-center">
+                            <span>답변자: <span class="font-medium text-blue-600">${answer.userId === userId ? '나 (You)' : answer.userId}</span></span>
+                            <span>${formatDate(answer.timestamp)}</span>
+                        </div>
+                    </div>
+                `;
+            };
+
+            /**
+            * Renders the full HTML structure for a question and its answers/form.
+            * @param {Object} question The question document data.
+            * @param {string} docId The Firestore document ID.
+            * @returns {string} HTML string for the question card.
+            */
+            const renderQuestionCard = (question, docId) => {
+                const answerCount = question.answers ? question.answers.length : 0;
+                const answersHtml = question.answers && question.answers.length > 0
+                    ? question.answers.map(renderAnswerHtml).join('')
+                    : '<p class="text-sm text-gray-500 p-2">아직 답변이 없습니다. 첫 번째 답변을 작성해 보세요!</p>';
+
+                // Ensure userId is a string for comparison
+                const questionUserId = question.userId || 'unknown';
+
+                return `
+                    <div id="question-${docId}" data-id="${docId}" class="question-card bg-white p-6 rounded-xl shadow-md transition duration-300 hover:shadow-lg border-l-4 border-blue-500">
+                        <div class="question-header cursor-pointer" onclick="toggleAnswers('${docId}')">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-semibold text-gray-900 leading-snug">${question.title}</h3>
+                                <span class="text-sm font-bold px-3 py-1 ml-4 rounded-full ${answerCount > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'} flex-shrink-0">
+                                    답변 ${answerCount}
+                                </span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-2 flex justify-between">
+                                <span>질문자: <span class="font-medium text-blue-600">${questionUserId === userId ? '나 (You)' : questionUserId}</span></span>
+                                <span>${formatDate(question.timestamp)}</span>
+                            </div>
+                        </div>
+
+                        <div id="answers-container-${docId}" class="answers-container mt-4 hidden">
+                            <!-- Question Content -->
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-800 mb-2">질문 내용</h4>
+                                <p class="text-gray-700 whitespace-pre-wrap">${question.content}</p>
+                            </div>
+
+                            <!-- Answers List -->
+                            <div class="mt-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">답변 목록 (${answerCount}개)</h4>
+                                <div class="answers-list">${answersHtml}</div>
+                            </div>
+
+                            <!-- Answer Submission Form -->
+                            <form class="answer-form mt-4" data-question-id="${docId}" onsubmit="handleAnswerSubmit(event, '${docId}')">
+                                <textarea name="answerContent" required rows="3" placeholder="여기에 답변을 작성해주세요. (최대 500자)" maxlength="500"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 mb-2"></textarea>
+                                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition duration-300">
+                                    답변 등록
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // --- Core Application Logic ---
+
+            /**
+            * Initializes Firebase and sets up authentication.
+            */
+            const initFirebase = async () => {
+                try {
+                    // Global variables are provided by the canvas environment
+                    appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+                    if (Object.keys(firebaseConfig).length === 0) {
+                        throw new Error("Firebase configuration is missing.");
+                    }
+
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    // Authentication: Sign in with the provided token or anonymously
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    // Wait for auth state change to ensure we have a valid user ID
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            document.getElementById('display-user-id').textContent = userId;
+                            isAuthReady = true;
+                            console.log("Firebase Auth Ready. User ID:", userId);
+                            // Once authenticated, start listening for data
+                            setupRealtimeListener();
+                        } else {
+                            // Should ideally not happen after signInWithCustomToken/signInAnonymously
+                            console.error("Authentication failed or user logged out.");
+                            isAuthReady = true; // Still mark as ready to prevent infinite loading
+                            document.getElementById('display-user-id').textContent = '인증 실패';
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Firebase 초기화 또는 인증 오류:", error);
+                    showModal(`Firebase 초기화 또는 인증 오류: ${error.message}`);
+                    document.getElementById('loading-message').textContent = '데이터 로딩 실패';
+                    isAuthReady = true;
+                }
+            };
+
+            /**
+            * Sets up the Firestore real-time listener for the 'questions' collection.
+            */
+            const setupRealtimeListener = () => {
+                if (!isAuthReady || !db) return;
+
+                const collectionPath = `artifacts/${appId}/public/data/questions`;
+                const questionsColRef = collection(db, collectionPath);
+
+                // Create a query to order by timestamp (newest first)
+                const q = query(questionsColRef, orderBy("timestamp", "desc"));
+
+                // Set up real-time listener
+                onSnapshot(q, (snapshot) => {
+                    const questionsList = document.getElementById('questions-list');
+                    const questions = [];
+
+                    snapshot.forEach(doc => {
+                        questions.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+
+                    // Clear loading message and existing list
+                    document.getElementById('loading-message').style.display = 'none';
+                    questionsList.innerHTML = '';
+                    document.getElementById('question-count').textContent = questions.length;
+
+                    if (questions.length === 0) {
+                        questionsList.innerHTML = '<p class="text-center text-gray-500 p-4 bg-white rounded-lg shadow">아직 등록된 질문이 없습니다. 첫 번째 질문을 올려보세요!</p>';
+                    } else {
+                        questions.forEach(q => {
+                            questionsList.innerHTML += renderQuestionCard(q, q.id);
+                        });
+                    }
+                    console.log(`Questions updated. Total: ${questions.length}`);
+
+                }, (error) => {
+                    console.error("Firestore 실시간 리스너 오류:", error);
+                    showModal(`질문 목록을 불러오는 중 오류가 발생했습니다: ${error.message}`);
+                });
+            };
+
+            /**
+            * Handles the submission of a new question.
+            * @param {Event} event The form submission event.
+            */
+            const handleQuestionSubmit = async (event) => {
+                event.preventDefault();
+
+                if (!isAuthReady || !db) {
+                    showModal("사용자 인증 준비 중입니다. 잠시 후 다시 시도해 주세요.");
+                    return;
+                }
+
+                const titleInput = document.getElementById('question-title');
+                const contentInput = document.getElementById('question-content');
+
+                const newQuestion = {
+                    title: titleInput.value.trim(),
+                    content: contentInput.value.trim(),
+                    userId: userId,
+                    timestamp: serverTimestamp(), // Date.now() 대신 serverTimestamp() 사용
+                    answers: [], // Initialize with an empty array
+                };
+
+                if (newQuestion.title.length < 5 || newQuestion.content.length < 10) {
+                    showModal("질문 제목은 5자 이상, 내용은 10자 이상 작성해 주세요.");
+                    return;
+                }
+
+                try {
+                    const collectionPath = `artifacts/${appId}/public/data/questions`;
+                    // 디버깅을 위해 로그 추가
+                    console.log("Adding new question to Firestore at:", collectionPath, "Data:", newQuestion);
+                    
+                    await addDoc(collection(db, collectionPath), newQuestion);
+                    
+                    // Clear the form on success
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    console.log("질문 등록 성공:", newQuestion.title);
+
+                } catch (error) {
+                    console.error("질문 등록 오류:", error);
+                    showModal(`질문 등록에 실패했습니다: ${error.message}`);
+                }
+            };
+            
+            /**
+            * Handles the submission of a new answer for a specific question.
+            * @param {Event} event The form submission event.
+            * @param {string} questionId The ID of the question being answered.
+            */
+            const handleAnswerSubmit = async (event, questionId) => {
+                event.preventDefault();
+
+                if (!isAuthReady || !db) {
+                    showModal("사용자 인증 준비 중입니다. 잠시 후 다시 시도해 주세요.");
+                    return;
+                }
+
+                const form = event.target;
+                const textarea = form.querySelector('textarea[name="answerContent"]');
+                const answerContent = textarea.value.trim();
+
+                if (answerContent.length < 5) {
+                    showModal("답변 내용은 5자 이상 작성해 주세요.");
+                    return;
+                }
+                if (answerContent.length > 500) {
+                    showModal("답변 내용은 500자를 초과할 수 없습니다.");
+                    return;
+                }
+
+                const newAnswer = {
+                    content: answerContent,
+                    userId: userId,
+                    timestamp: serverTimestamp(), // Date.now() 대신 serverTimestamp() 사용
+                };
+
+                try {
+                    const docPath = `artifacts/${appId}/public/data/questions/${questionId}`;
+                    const questionRef = doc(db, docPath);
+
+                    // Use arrayUnion to safely add the new answer to the answers array
+                    await updateDoc(questionRef, {
+                        answers: arrayUnion(newAnswer)
+                    });
+                    
+                    // Clear the form on success
+                    textarea.value = '';
+                    console.log(`Question ${questionId}에 답변 등록 성공`);
+
+                } catch (error) {
+                    console.error("답변 등록 오류:", error);
+                    showModal(`답변 등록에 실패했습니다: ${error.message}`);
+                }
+            };
+
+            // --- UI Interactions ---
+
+            /**
+            * Toggles the visibility of the answers and answer form for a given question.
+            * Exposed globally for inline HTML click handler.
+            * @param {string} docId The Firestore document ID of the question.
+            */
+            window.toggleAnswers = (docId) => {
+                const container = document.getElementById(`answers-container-${docId}`);
+                if (container) {
+                    container.classList.toggle('hidden');
+                    // Optional: Scroll to the container when expanded
+                    if (!container.classList.contains('hidden')) {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            };
+            
+            // Expose handleAnswerSubmit globally so it can be called from the dynamically generated HTML
+            window.handleAnswerSubmit = handleAnswerSubmit;
+
+            // --- Initialization on Load ---
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Attach question submission handler
+                document.getElementById('question-form').addEventListener('submit', handleQuestionSubmit);
+
+                // Initialize Firebase services
+                initFirebase();
+            });
+
+        </script>
+    </body>
+    </html>
