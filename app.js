@@ -96,28 +96,157 @@ function alertel(innout){
     document.getElementById('msgg').innerHTML = innout;
     slidedown();
 }
+function upl2() {
+    alertel('업로드 하는중...');
+    console.log("wikiname:", wikiname);
+    console.log("ind:", ind);
+
+    if (localStorage.getItem('useremail')) { // 로그인 체크 필요 시 활성화
+        const docContent = ind + document.getElementById('ed').value + "///" + localStorage.getItem('useremail') + new Date().toLocaleString() + "///";
+
+        // 1️⃣ 시트 데이터 GET
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1")
+        .then(r => r.json())
+        .then(data => {
+            console.log("GET 응답 확인:", data);
+
+            // 2️⃣ 배열 접근 (NoCodeAPI 구조: { data: [...] })
+            const sheetArray = data.data;
+            if (!sheetArray || !Array.isArray(sheetArray)) {
+                console.error("시트 배열을 찾을 수 없음");
+                return;
+            }
+
+            // 3️⃣ 제목으로 행 찾기
+            const row = sheetArray.find(r => r.제목 === wikiname);
+            if (!row) {
+                console.error("업데이트할 행을 찾을 수 없음");
+                return;
+            }
+
+            const row_id = row.row_id;
+            console.log("찾은 row_id:", row_id);
+
+            // 4️⃣ PUT 요청으로 업데이트
+            fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    row_id: row_id,
+                    문서: docContent
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                console.log("업데이트 완료✅", res);
+                alerte('업로드 완료✅');
+            })
+            .catch(err => console.error("PUT 에러:", err));
+        })
+        .catch(err => console.error("GET 에러:", err));
+    } else {
+        alerte('로그인이 필요합니다');
+    }
+}
+
 function upl(){
     alertel('업로드 하는중...')
+    console.log(wikiname + "aa")
+    console.log(ind)
     if (/*localStorage.getItem('useremail')*/true){
         fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
             // 🚨 중요: 어떤 행을 찾을지 지정하는 검색 조건
-                "searchKey": "A", // ⬅️ Google Sheet의 'A' 열을 기준으로 검색합니다.
+                "searchKey": "제목", // ⬅️ Google Sheet의 'A' 열을 기준으로 검색합니다.
                 "searchValue": wikiname, // ⬅️ A열에서 이 값을 가진 행을 찾습니다.
                                                                                 
-                "B": ind + document.getElementById('ed').value + "///" + "test" + "test" + new Date().toLocaleString() + "///"
+                문서: ind + document.getElementById('ed').value + "///" + "test" + "test" + new Date().toLocaleString() + "///"
             })
         })
-        .then(() => alerte('업로드 완료✅'))
-        .catch((err) => console.log("에러 발생: " + err));
+        .then(async (response) => {
+            const text = await response.text();  // JSON 못 받으면 text로
+            if (!response.ok) {
+                console.error("HTTP Error:", response.status, response.statusText);
+                console.error("Response body:", text);
+            } else {
+                console.log("업로드 완료✅", text);
+            }
+        })
+        .catch(err => console.error("Fetch error:", err));
     }else{
         alerte('로그인이 필요합니다');
     }
 }
+function upl3(){
+    alertel('업로드 하는중...')
+    
+    // --- 🚨 디버깅 코드 시작 ---// 1. 사용자 입력 값을 가져옴
+    const edValue = document.getElementById('ed').value;
+
+    // 2. 🚨 클렌징: 사용자 입력 내의 위험 문자(따옴표, 백슬래시)를 안전하게 이스케이프 처리
+    const safeUserContent = edValue.replace(/\\/g, '\\\\').replace(/"/g, '\\"'); // <--- 이 부분이 추가됨!
+
+    // 3. 안전한 내용으로 최종 문자열 생성
+    const updateValue = ind + safeUserContent + "///" + username + mail + new Date().toLocaleString() + "///"; 
+
+    // 4. 객체 조립 및 JSON.stringify 호출 (이후 단계는 동일)
+    const dataToUpdate = {
+        "searchKey": "A", 
+        "searchValue": wikiname.trim(), 
+        "B": updateValue 
+    };
+    
+    // 🚨 콘솔에 최종 객체 출력 (JSON.stringify 전)
+    console.log("1. 전송할 데이터 객체:", dataToUpdate);
+    
+    let jsonBody;
+    try {
+        jsonBody = JSON.stringify(dataToUpdate);
+        // 🚨 실제로 서버에 전송될 JSON 문자열 확인 (따옴표, 특수문자 확인)
+        console.log("2. 최종 JSON 문자열:", jsonBody); 
+    } catch (e) {
+        console.error("JSON.stringify 오류:", e);
+        alerte("데이터 변환 오류: 특수 문자를 확인하세요.");
+        return; // 오류 발생 시 함수 실행 중단
+    }
+    // --- 🚨 디버깅 코드 끝 ---
+    
+    if (true){
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            // 3. 디버깅에서 생성된 JSON 문자열 사용
+            body: jsonBody 
+        })
+        .then(response => {
+            if (!response.ok) {
+                // 400 Bad Request 발생 시 이 에러가 출력됨
+                throw new Error(`HTTP error! status: ${response.status} (요청 형식 오류 가능성 높음)`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // nocodeapi의 응답 데이터를 보고 업데이트 성공 여부를 판단
+            console.log("API 응답 데이터:", data);
+
+            if (data && data.updatedRows && data.updatedRows.length > 0) {
+                 alerte('업데이트 완료✅');
+            } else {
+                 alerte('업데이트 실패: 행을 찾지 못했거나 데이터 변경 없음❌');
+            }
+        })
+        .catch((err) => console.error("업데이트 중 에러 발생: " + err));
+    }else{
+        alerte('로그인이 필요합니다');
+    }
+}
+
 /*
 async function upel(event){
     event.preventDefault();
