@@ -49,8 +49,6 @@ function makeanew(nameofthat){
         })
         .then(() => window.location.href = "editor.html?wikie=" + nameofthat)
         .catch((err) => console.log("에러 발생: " + err));
-
-        window.location.href = "editor.html?wikie=" + nameofthat;
     }else{
         alerte("로그인이 필요합니다");
     }
