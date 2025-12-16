@@ -44,10 +44,10 @@ function makeanew(nameofthat){
                 "Content-Type": "application/json"
             },
             body: JSON.stringify([
-                [ nameofthat, "{개요}///" + localStorage.getItem('useremail') + new Date().toLocaleString + "///" ]  // ← 여기를 2차원 배열로
+                [ nameofthat, "{개요}///" + localStorage.getItem('useremail') + new Date().toLocaleString() + "///" ]  // ← 여기를 2차원 배열로
             ])
         })
-        .then(() => console.log("제출 성공!"))
+        .then(() => window.location.href = "editor.html?wikie=" + nameofthat)
         .catch((err) => console.log("에러 발생: " + err));
 
         window.location.href = "editor.html?wikie=" + nameofthat;
