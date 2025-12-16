@@ -1,3 +1,4 @@
+let params = new URLSearchParams(window.location.search);
 let wikiname = params.get("wikie");
 let indx = '{아직 존재하지 않는 문서입니다}<br><input onclick="makeanew(' + "'" + wikiname + "'" +');" type="button" value="이 이름으로 새 문서 만들기"></input>';
 let neckslice = ""; //내용에서 제목부분만
@@ -33,7 +34,6 @@ let meal = []
 settt = 100 + ddd * 35;
 //const db = require('./db'); //db 객체 불러기기
 //const wiki = db.prepare('SELECT * FROM wiki').all();
-let params = new URLSearchParams(window.location.search);
 let ind;
 
 function slideup(){
