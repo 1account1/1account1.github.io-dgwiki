@@ -688,6 +688,7 @@ function likie() {
     console.log(cookies);
 }
 function editie() {
+    indx = "{개요}";
     fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/Sheet1')
     .then(res => res.json())
     .then(data => {
