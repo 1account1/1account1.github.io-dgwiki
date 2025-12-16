@@ -36,6 +36,28 @@ settt = 100 + ddd * 35;
 //const wiki = db.prepare('SELECT * FROM wiki').all();
 let ind;
 
+function makeanew(nameofthat){
+    if (localStorage.getItem('useremail')){
+        fetch("https://v1.nocodeapi.com/dghskkm/google_sheets/cvudLqviLqhjVuHG?tabId=Sheet1", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                [ nameofthat, "{개요}///" + localStorage.getItem('useremail') + new Date().toLocaleString + "///" ]  // ← 여기를 2차원 배열로
+            ])
+        })
+        .then(() => console.log("제출 성공!"))
+        .catch((err) => console.log("에러 발생: " + err));
+
+        window.location.href = "editor.html?wikie=" + nameofthat;
+    }else{
+        alerte("로그인이 필요합니다");
+    }
+}
+
+
+
 function slideup(){
     if (apll < 11){
         document.getElementById('msggg').style.top = 70 - apll + "px";
