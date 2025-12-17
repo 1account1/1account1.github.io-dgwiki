@@ -7,12 +7,12 @@ const par = `
 </span>
 <span>
 <a href="http://votedghs.kro.kr" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
-회장선거
+온순환
 </a>
 </span>
 <span>
-<a href="bab.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
-급식
+<a href="econom.html" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
+경제소식지
 </a>
 <a href="Index.html?wikie=문서 목록" style="text-decoration: none; color: white; font-weight: bolder;font-size: small;margin-left: 3%;">
 문서목록

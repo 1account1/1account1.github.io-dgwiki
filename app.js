@@ -379,6 +379,9 @@ function conver(){
         indx = indx.replaceAll("ㄷㅇㄹㅌ", "Index.html?wikie=");
         window.location.href = indx;
     }
+    if (indx == '{아직 존재하지 않는 문서입니다}<br><input onclick="makeanew(' + "'" + wikiname + "'" +');" type="button" value="이 이름으로 새 문서 만들기"></input>'){
+        document.getElementById('vuswlq').href = "";
+    }
     indx = indx.replaceAll("->", "→");
     indx = indx.replaceAll("<-", "←");
     indx = indx.replaceAll("+>", "↓");
@@ -699,8 +702,8 @@ function editie() {
             }
         })
         setTimeout(function() {
-            if (indx == "<h2 class='hed' class='t1'>아직 존재하지 않는 문서입니다</h2>"){
-                indx = '{아직 존재하지 않는 문서입니다}';
+            if (indx == "<h2 class='hed' class='t1'>개요</h2>"){
+                indx = '{개요}';
             }
             if (wikiname == "문서 목록"){
                 indx = '{편집이 불가능한 문서입니다}';
@@ -725,9 +728,18 @@ async function kjeditie() {
 }
 
 async function kyungjae(){
-    const res = await fetch('/econo/' + wikiname);
-    const data = await res.json();
-    let innddx = data.indexx;
+    console.log("아");
+    document.getElementById('inp').innerHTML = "";
+    fetch('https://opensheet.elk.sh/1mfbFe-a_58JWIKVITafP_0oHg0o1K6FJBkiVqX4RLl0/경제')
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(element => {
+            document.getElementById('inp').innerHTML = document.getElementById('inp').innerHTML + "<h3><a href=ecread.html?wikie=" + element.내용 + ">" + element.제목 + "</a></h3>";
+            console.log(element.제목)
+        })
+    })
+/*
+    let innddx = element;
     innddx = "<h1>" + wikiname + "</h1>" + innddx;
     innddx = innddx.replaceAll("ㄹㅋ(", "<a href='");
     innddx = innddx.replaceAll(")ㄴㅇ(", "'>");
@@ -737,7 +749,7 @@ async function kyungjae(){
     innddx = innddx.replaceAll("ㅇㅁㅈ(", "<img width='300px' src='");
     innddx = innddx.replaceAll(")ㅇㅁㅈ", "'>");
     innddx = innddx.replaceAll("\n", "<br>");
-    document.getElementById('inp').innerHTML = innddx;
+    document.getElementById('inp').innerHTML = innddx;*/
 }
 
 document.addEventListener("DOMContentLoaded", function(){
