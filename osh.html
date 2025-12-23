@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대건온순환 | 우리 학교 장터</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    
+    <style>
+        /* [디자인 시스템: Modern & Sleek] */
+        :root {
+            --primary: #2563eb; /* 신뢰감을 주는 로얄 블루 */
+            --dark: #111827;    /* 거의 검정에 가까운 진한 남색 */
+            --gray: #6b7280;    /* 세련된 회색 */
+            --light: #f3f4f6;   /* 아주 연한 회색 배경 */
+            --white: #ffffff;
+            --border: #e5e7eb;  /* 얇고 섬세한 테두리 */
+            --danger: #ef4444;  /* 경고 레드 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background-color: var(--white); 
+            color: var(--dark); 
+            padding-top: 60px; /* 헤더 높이만큼 여백 */
+            min-height: 100vh; /* 화면 전체 높이 사용 */
+            display: flex;
+            flex-direction: column; /* 내용을 세로로 배치 */
+        }
+
+        /* 공통 버튼 스타일 (미니멀) */
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+        
+        .btn { 
+            display: inline-flex; justify-content: center; align-items: center;
+            padding: 14px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; 
+            transition: all 0.2s ease; width: 100%;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary { background: var(--dark); color: white; }
+        .btn-primary:hover { background: black; }
+
+        .btn-accent { background: var(--primary); color: white; }
+        .btn-accent:hover { background: #1d4ed8; }
+        
+        .btn-outline { border: 1px solid var(--border); color: var(--dark); background: white; }
+        .btn-outline:hover { background: var(--light); border-color: #d1d5db; }
+
+        .btn-kakao { background: #fee500; color: #191919; font-weight: 500; }
+        
+        /* 관리자 삭제 버튼 (심플하게) */
+        .btn-delete { 
+            margin-top: 8px; padding: 8px; font-size: 0.8rem; 
+            color: var(--gray); text-decoration: underline; background: transparent; 
+        }
+        .btn-delete:hover { color: var(--danger); }
+
+        /* 헤더 (블러 효과 적용) */
+        header { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 65px; /* 헤더 높이 약간 증가 */
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 5%; z-index: 1000;
+        }
+        .logo { 
+            /* ⭐ 수정됨: 로고 크기 확대 (1.2rem -> 1.5rem) */
+            font-size: 1.5rem; font-weight: 800; color: var(--dark); letter-spacing: -0.5px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .logo i { color: var(--primary); font-size: 1.2rem; }
+
+        /* 네비게이션 탭 (밑줄형) */
+        .nav-group { display: flex; gap: 20px; height: 100%; }
+        .nav-item { 
+            display: flex; align-items: center; height: 100%; 
+            font-weight: 600; color: var(--gray); cursor: pointer; position: relative;
+            font-size: 0.95rem;
+        }
+        .nav-item:hover { color: var(--dark); }
+        .nav-item.active { color: var(--dark); }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--dark);
+        }
+        /* 기부 탭 활성화 시 포인트 컬러 변경 */
+        .nav-item.active-donate { color: var(--primary); }
+        .nav-item.active-donate::after { background: var(--primary); }
+
+        /* 메인 레이아웃 */
+        .container { 
+            max-width: 1200px; margin: 0 auto; padding: 30px 20px; 
+            animation: fadeIn 0.4s ease-out; display: none; 
+            flex-grow: 1; /* 남은 공간을 채우도록 설정 (푸터를 하단으로 밀어냄) */
+            width: 100%;
+        }
+        .container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 필터 (토글 스타일) */
+        .filter-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
+        .filter-wrapper::-webkit-scrollbar { display: none; }
+        
+        .filter-chip { 
+            padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border); 
+            background: white; color: var(--gray); font-size: 0.9rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: 0.2s;
+        }
+        .filter-chip:hover { border-color: var(--gray); color: var(--dark); }
+        .filter-chip.selected { background: var(--dark); color: white; border-color: var(--dark); }
+
+        /* 그리드 카드 시스템 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+
+        /* 카드 디자인 (미니멀리즘) */
+        .card { 
+            background: white; border-radius: 0; /* 각지게 */
+            overflow: hidden; transition: 0.3s ease; 
+            display: flex; flex-direction: column;
+            border-bottom: 1px solid transparent;
+        }
+        .card:hover { transform: translateY(-4px); }
+
+        .card-img-box { 
+            width: 100%; aspect-ratio: 1 / 1; background: var(--light); 
+            position: relative; overflow: hidden; border-radius: 8px;
+        }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
+        .card:hover .card-img { transform: scale(1.05); }
+
+        .card-status { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); color: white; 
+            display: flex; justify-content: center; align-items: center; 
+            font-weight: 700; font-size: 1.1rem; backdrop-filter: blur(2px);
+        }
+
+        .card-info { padding: 16px 0; display: flex; flex-direction: column; flex-grow: 1; }
+        
+        .card-tag { 
+            font-size: 0.75rem; font-weight: 700; color: var(--primary); 
+            text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;
+        }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--dark); margin-bottom: 6px; line-height: 1.4; }
+        .card-price { font-size: 1.1rem; font-weight: 800; color: var(--dark); }
+        .card-seller { font-size: 0.85rem; color: #9ca3af; margin-top: auto; padding-top: 10px; }
+
+        .card-actions { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+
+        /* 로그인 화면 (센터 정렬, 심플) */
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: white; z-index: 2000; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px;
+        }
+        .login-inner { width: 100%; max-width: 360px; text-align: center; }
+        .input-field { 
+            width: 100%; padding: 16px; margin: 24px 0; 
+            border: 1px solid var(--border); border-radius: 8px; 
+            font-size: 1rem; background: var(--light); transition: 0.2s;
+        }
+        .input-field:focus { border-color: var(--dark); background: white; }
+
+        /* 글쓰기 모달 */
+        .write-wrap { max-width: 500px; margin: 0 auto; background: white; }
+        .form-label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+        .file-upload { 
+            border: 1px dashed #d1d5db; padding: 40px; text-align: center; 
+            border-radius: 8px; cursor: pointer; transition: 0.2s; color: var(--gray);
+        }
+        .file-upload:hover { border-color: var(--dark); color: var(--dark); background: var(--light); }
+
+        /* 플로팅 버튼 (세련된 원형) */
+        .fab { 
+            position: fixed; bottom: 40px; right: 40px; 
+            width: 60px; height: 60px; border-radius: 50%; 
+            background: var(--dark); color: white; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            cursor: pointer; z-index: 900; transition: transform 0.2s;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); }
+        .fab.mode-donate { background: var(--primary); box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); }
+
+        /* 검색창 */
+        .search-bar { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 24px; font-size: 1rem; }
+        
+        /* 안내 박스 */
+        .info-box { 
+            background: var(--light); padding: 24px; border-radius: 12px; 
+            margin-bottom: 30px; text-align: center; 
+        }
+        .info-box h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .info-box p { font-size: 0.9rem; color: var(--gray); }
+
+        /* ⭐ 추가된 푸터 스타일 */
+        .dev-footer {
+            text-align: center;
+            padding: 25px 0;
+            margin-top: auto; /* 내용이 짧아도 항상 맨 아래에 위치 */
+            font-size: 0.85rem;
+            color: var(--gray);
+            background: var(--white);
+            border-top: 1px solid var(--border);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div id="login-screen">
+        <div class="login-inner">
+            <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 15px; color:var(--primary);">대건온순환</h1>
+            <p style="color: var(--gray); font-size: 1rem;">우리 학교 중고거래 & 나눔 플랫폼</p>
+            
+            <div style="margin-top: 50%;">
+                <div id="g_id_onload"
+                    data-client_id="671092852945-06cb0vcctj58pjpf6gmcapk5voqc8h3e.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleCredentialResponse"
+                    data-auto_prompt="false">
+                </div>
+                <div class="bot">
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="signin_with"
+                    data-size="large">
+                </div>
+                <br>
+                <div>게스트로 보기</div>
+            </div>
+        </div>
+    </div>
+
+    <header id="header" style="display:none;">
+        <div class="logo" onclick="window.app.goHome()">
+            <i class="fas fa-circle-nodes"></i> 대건온순환
+        </div>
+        <div class="nav-group">
+            <div id="tab-trade" class="nav-item active" onclick="window.app.switchTab('trade')">중고장터</div>
+            <div id="tab-donate" class="nav-item" onclick="window.app.switchTab('donate')">기부·나눔</div>
+        </div>
+        <button class="btn btn-outline" style="width: auto; padding: 8px 16px; font-size: 0.8rem;" onclick="location.reload()">로그아웃</button>
+    </header>
+
+    <div id="screen-home" class="container">
+        <div class="filter-wrapper">
+            <span class="filter-chip selected" onclick="window.app.filter(this, 'all')">전체</span>
+            <span class="filter-chip" onclick="window.app.filter(this, 'book')">도서/문제집</span>
+            <span class="filter-chip" onclick="window.app.filter(this, 'tech')">전자기기</span>
+            <span class="filter-chip" onclick="window.app.filter(this, 'life')">생활용품</span>
+            <span class="filter-chip" onclick="window.app.filter(this, 'etc')">기타</span>
+        </div>
+        
+        <input type="text" id="search" class="search-bar" placeholder="찾으시는 물건이 있나요?" onkeyup="window.app.renderTrade()">
+        
+        <div id="trade-list" class="grid"></div>
+        <div class="fab" onclick="window.app.goWrite('trade')"><i class="fas fa-plus"></i></div>
+    </div>
+
+    <div id="screen-donate-home" class="container">
+        <div class="info-box">
+            <h3 style="color: var(--primary);">기부 천사가 되어주세요</h3>
+            <p>더 이상 사용하지 않는 물건으로 따뜻한 마음을 나누세요.</p>
+        </div>
+        <div id="donate-list" class="grid"></div>
+        <div class="fab mode-donate" onclick="window.app.goWrite('donate')"><i class="fas fa-gift"></i></div>
+    </div>
+
+    <div id="screen-write" class="container">
+        <div class="write-wrap">
+            <h2 id="write-title" style="margin-bottom: 30px; font-weight: 800;">물건 등록</h2>
+            
+            <div style="margin-bottom: 24px;">
+                <label class="form-label">상품 사진</label>
+                <div class="file-upload" onclick="document.getElementById('w-file').click()">
+                    <i class="fas fa-camera" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br>
+                    <span>클릭하여 사진 업로드</span>
+                </div>
+                <input type="file" id="w-file" accept="image/*" style="display:none;" onchange="window.app.preview(this)">
+                <img id="w-img-preview" style="width:100%; margin-top:16px; border-radius:8px; display:none;">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label class="form-label">제목</label>
+                <input type="text" id="w-title" class="input-field" style="margin:0;" placeholder="물건 이름">
+            </div>
+
+            <div style="margin-bottom: 24px;" id="price-group">
+                <label class="form-label">가격</label>
+                <input type="number" id="w-price" class="input-field" style="margin:0;" placeholder="판매 가격 (원)">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label class="form-label">카테고리</label>
+                <select id="w-cat" class="input-field" style="margin:0;">
+                    <option value="book">도서/문제집</option>
+                    <option value="tech">전자기기</option>
+                    <option value="life">생활용품</option>
+                    <option value="etc">기타</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 40px;">
+                <label class="form-label">카카오톡 링크</label>
+                <input type="text" id="w-link" class="input-field" style="margin:0;" placeholder="오픈채팅방 주소 붙여넣기">
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button class="btn btn-outline" onclick="window.app.goBack()">취소</button>
+                <button class="btn btn-primary" id="btn-submit" onclick="window.app.upload()">등록 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="dev-footer">
+        개발자 choihyoje
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // 🔴 본인의 Firebase 키 값으로 교체해주세요! 🔴
+        const firebaseConfig = {
+            apiKey: "본인의_apiKey_입력",
+            authDomain: "본인의_authDomain_입력",
+            databaseURL: "https://onsunhwan-default-rtdb.firebaseio.com",
+            projectId: "본인의_projectId_입력",
+            storageBucket: "본인의_storageBucket_입력",
+            messagingSenderId: "본인의_ID_입력",
+            appId: "본인의_AppID_입력"
+        };
+
+        const fbApp = initializeApp(firebaseConfig);
+        const db = getDatabase(fbApp);
+        
+        // 🤫 관리자 ID (Secret)
+        const ADMIN_ID = 'chlgywp17@pess.cnehs.kr';
+
+        window.app = {
+            user: null,
+            products: [],
+            currentTab: 'trade',
+            currentCat: 'all',
+            writeMode: 'trade',
+
+            init: function() {
+                const productsRef = ref(db, 'products');
+                onValue(productsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    this.products = data ? Object.values(data) : [];
+                    this.refresh();
+                });
+            },
+
+            login: function() {
+                this.user = localStorage.getItem('useremail');
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('header').style.display = 'flex';
+                
+                if(localStorage.getItem('useremail') === ADMIN_ID) alert('관리자 계정으로 접속했습니다.');
+                
+                this.switchTab('trade');
+            },
+
+            switchTab: function(tabName) {
+                this.currentTab = tabName;
+                document.querySelectorAll('.container').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n => {
+                    n.classList.remove('active');
+                    n.classList.remove('active-donate');
+                });
+
+                if(tabName === 'trade') {
+                    document.getElementById('screen-home').classList.add('active');
+                    document.getElementById('tab-trade').classList.add('active');
+                } else {
+                    document.getElementById('screen-donate-home').classList.add('active');
+                    document.getElementById('tab-donate').classList.add('active-donate');
+                }
+                this.refresh();
+            },
+
+            goHome: function() { this.switchTab('trade'); },
+            goBack: function() { this.switchTab(this.currentTab); },
+
+            goWrite: function(mode) {
+                document.querySelectorAll('.container').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-write').classList.add('active');
+                
+                document.getElementById('w-title').value = '';
+                document.getElementById('w-price').value = '';
+                document.getElementById('w-link').value = '';
+                document.getElementById('w-file').value = '';
+                document.getElementById('w-img-preview').style.display = 'none';
+                
+                const title = document.getElementById('write-title');
+                const priceGroup = document.getElementById('price-group');
+                const btn = document.getElementById('btn-submit');
+
+                this.writeMode = mode;
+
+                if(mode === 'donate') {
+                    title.innerText = '무료나눔 등록';
+                    priceGroup.style.display = 'none';
+                    btn.className = 'btn btn-accent';
+                    btn.innerText = '나눔하기';
+                } else {
+                    title.innerText = '중고물품 등록';
+                    priceGroup.style.display = 'block';
+                    btn.className = 'btn btn-primary';
+                    btn.innerText = '등록하기';
+                }
+            },
+
+            preview: function(input) {
+                if(input.files && input.files[0]) {
+                    const file = input.files[0];
+                    if(file.size > 1024 * 1024) return alert("사진 용량이 너무 큽니다 (1MB 이하)");
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const img = document.getElementById('w-img-preview');
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            },
+
+            upload: function() {
+                const title = document.getElementById('w-title').value;
+                const link = document.getElementById('w-link').value;
+                const cat = document.getElementById('w-cat').value;
+                const imgTag = document.getElementById('w-img-preview');
+                const img = (imgTag.style.display === 'block') ? imgTag.src : null;
+                
+                let price = 0;
+                if(this.writeMode === 'trade') {
+                    price = document.getElementById('w-price').value;
+                    if(!price) return alert('가격을 입력해주세요.');
+                }
+
+                if(!title) return alert('제목을 입력해주세요.');
+                if(!img) return alert('사진은 필수입니다.');
+
+                const id = Date.now();
+                set(ref(db, 'products/' + id), {
+                    id: id, title: title, price: price, cat: cat, link: link,
+                    img: img, seller: this.user, type: this.writeMode, status: 'active'
+                }).then(() => {
+                    alert('등록되었습니다!');
+                    this.switchTab(this.writeMode);
+                });
+            },
+
+            markSold: function(id) {
+                if(confirm('거래(나눔) 완료 처리하시겠습니까?')) {
+                    update(ref(db, 'products/' + id), { status: 'sold' });
+                }
+            },
+
+            deleteItem: function(id) {
+                if(confirm('정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                    remove(ref(db, 'products/' + id));
+                }
+            },
+
+            filter: function(el, cat) {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('selected'));
+                el.classList.add('selected');
+                this.currentCat = cat;
+                this.refresh();
+            },
+
+            refresh: function() {
+                if(this.currentTab === 'trade') this.renderTrade();
+                else this.renderDonate();
+            },
+
+            renderTrade: function() {
+                const list = document.getElementById('trade-list');
+                const keyword = document.getElementById('search').value.toLowerCase();
+                list.innerHTML = '';
+
+                let result = this.products.filter(p => p.type === 'trade').sort((a,b) => b.id - a.id);
+                if(keyword) result = result.filter(p => p.title.toLowerCase().includes(keyword));
+                if(this.currentCat !== 'all') result = result.filter(p => p.cat === this.currentCat);
+
+                result.forEach(p => {
+                    const isSold = p.status === 'sold';
+                    const isMyItem = p.seller === this.user;
+                    const isAdmin = this.user === ADMIN_ID;
+
+                    let btnHtml = '';
+                    if(isSold) btnHtml = `<button class="btn" style="background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">거래완료</button>`;
+                    else if(isMyItem) btnHtml = `<button class="btn btn-primary" onclick="window.app.markSold(${p.id})">판매완료 처리</button>`;
+                    else if(p.link) btnHtml = `<button class="btn btn-kakao" onclick="window.open('${p.link}')"><i class="fas fa-comment"></i> 채팅하기</button>`;
+                    else btnHtml = `<button class="btn btn-outline" disabled>링크 없음</button>`;
+
+                    let deleteBtn = '';
+                    if(isMyItem || isAdmin) {
+                        deleteBtn = `<button class="btn-delete" onclick="window.app.deleteItem(${p.id})">게시물 삭제</button>`;
+                    }
+
+                    list.innerHTML += `
+                        <div class="card">
+                            <div class="card-img-box">
+                                <img src="${p.img}" class="card-img">
+                                ${isSold ? '<div class="card-status">거래완료</div>' : ''}
+                            </div>
+                            <div class="card-info">
+                                <div class="card-tag">${p.cat === 'book' ? '도서' : p.cat === 'tech' ? '기기' : p.cat === 'life' ? '생활' : '기타'}</div>
+                                <div class="card-title">${p.title}</div>
+                                <div class="card-price">${Number(p.price).toLocaleString()}원</div>
+                                <div class="card-seller">판매자: ${p.seller}</div>
+                                <div class="card-actions">
+                                    ${btnHtml}
+                                    ${deleteBtn}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            },
+
+            renderDonate: function() {
+                const list = document.getElementById('donate-list');
+                list.innerHTML = '';
+                let result = this.products.filter(p => p.type === 'donate').sort((a,b) => b.id - a.id);
+
+                if(result.length === 0) {
+                    list.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 0; color:#9ca3af;">등록된 나눔 물품이 없습니다.</div>`;
+                    return;
+                }
+
+                result.forEach(p => {
+                    const isSold = p.status === 'sold';
+                    const isMyItem = p.seller === this.user;
+                    const isAdmin = this.user === ADMIN_ID;
+
+                    let btnHtml = '';
+                    if(isSold) btnHtml = `<button class="btn" style="background:#e5e7eb; color:#9ca3af; cursor:not-allowed;">나눔완료</button>`;
+                    else if(isMyItem) btnHtml = `<button class="btn btn-accent" onclick="window.app.markSold(${p.id})">나눔완료 처리</button>`;
+                    else if(p.link) btnHtml = `<button class="btn btn-kakao" onclick="window.open('${p.link}')">채팅하기</button>`;
+
+                    let deleteBtn = '';
+                    if(isMyItem || isAdmin) {
+                        deleteBtn = `<button class="btn-delete" onclick="window.app.deleteItem(${p.id})">게시물 삭제</button>`;
+                    }
+
+                    list.innerHTML += `
+                        <div class="card">
+                            <div class="card-img-box">
+                                <img src="${p.img}" class="card-img">
+                                ${isSold ? '<div class="card-status">나눔완료</div>' : ''}
+                            </div>
+                            <div class="card-info">
+                                <div class="card-tag" style="color:var(--primary)">무료나눔</div>
+                                <div class="card-title">${p.title}</div>
+                                <div class="card-seller">기부자: ${p.seller}</div>
+                                <div class="card-actions">
+                                    ${btnHtml}
+                                    ${deleteBtn}
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+        };
+
+        window.app.init();
+    </script>
+    <script>
+        // 로그인 완료 시 실행
+        function handleCredentialResponse(response) {
+        const data = parseJwt(response.credential);
+        console.log("이메일:", data.email);
+        console.log("이름:", data.name);
+
+        // 변수 저장
+        const userEmail = data.email;
+        const userName = data.name;
+
+        if (userEmail.includes('pess')){
+            localStorage.setItem('username', userName)
+            localStorage.setItem('useremail', userEmail)
+            window.app.login();
+        }
+        }
+
+        // JWT 토큰 디코딩 함수
+        function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+        }
+    </script>
+</body>
+</html>

@@ -13,7 +13,8 @@
         let params = new URLSearchParams(window.location.search);
         let wikiname = params.get("wikie");
         document.addEventListener("DOMContentLoaded", function(){
-            document.getElementById('inp').innerHTML = wikiname;
+            let naeyong = wikiname.replaceAll("///", " ");
+            document.getElementById('inp').innerHTML = naeyong;
         })
     </script>
     <div class="barr" id="barr">
